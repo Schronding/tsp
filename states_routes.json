@@ -1,0 +1,348 @@
+{
+  "graph_metadata": {
+    "description": "Grafo de autotransporte de carga de Mexico para TSP/VRP",
+    "spatial_reference": "WGS84",
+    "weight_formula": "W = (D_km / Vo_kmh) + P_NOM087 + T_extra",
+    "note": "Conectividad simetrica con pesos tomados del compendio tabular del documento fuente."
+  },
+  "nodes": [
+    {
+      "id": "AGS",
+      "estado": "Aguascalientes",
+      "capital": "Aguascalientes",
+      "coordenadas": {"lat": 21.8798, "lon": -102.2960},
+      "conexiones": [
+        {"destino": "ZAC", "carretera": "MEX-45", "peso_w_horas": 1.94, "detalles_modelo": {"dist_km": 115, "vo": 70, "pausas_h": 0.0, "t_extra": 0.3}},
+        {"destino": "JAL", "carretera": "MEX-70", "peso_w_horas": 3.64, "detalles_modelo": {"dist_km": 220, "vo": 70, "pausas_h": 0.0, "t_extra": 0.5}}
+      ]
+    },
+    {
+      "id": "BC",
+      "estado": "Baja California",
+      "capital": "Mexicali",
+      "coordenadas": {"lat": 32.6633, "lon": -115.4678},
+      "conexiones": [
+        {"destino": "SON", "carretera": "MEX-2", "peso_w_horas": 10.06, "detalles_modelo": {"dist_km": 680, "vo": 75, "pausas_h": 0.5, "t_extra": 0.5}},
+        {"destino": "BCS", "carretera": "MEX-1", "peso_w_horas": 26.11, "detalles_modelo": {"dist_km": 1470, "vo": 65, "pausas_h": 2.0, "t_extra": 1.5}}
+      ]
+    },
+    {
+      "id": "BCS",
+      "estado": "Baja California Sur",
+      "capital": "La Paz",
+      "coordenadas": {"lat": 24.1426, "lon": -110.3127},
+      "conexiones": [
+        {"destino": "BC", "carretera": "MEX-1", "peso_w_horas": 26.11, "detalles_modelo": {"dist_km": 1470, "vo": 65, "pausas_h": 2.0, "t_extra": 1.5}}
+      ]
+    },
+    {
+      "id": "CAMP",
+      "estado": "Campeche",
+      "capital": "San Francisco de Campeche",
+      "coordenadas": {"lat": 19.8301, "lon": -90.5349},
+      "conexiones": [
+        {"destino": "YUC", "carretera": "MEX-180", "peso_w_horas": 2.70, "detalles_modelo": {"dist_km": 175, "vo": 70, "pausas_h": 0.0, "t_extra": 0.2}},
+        {"destino": "TAB", "carretera": "MEX-180", "peso_w_horas": 6.94, "detalles_modelo": {"dist_km": 380, "vo": 65, "pausas_h": 0.5, "t_extra": 0.6}},
+        {"destino": "QROO", "carretera": "MEX-186", "peso_w_horas": 6.47, "detalles_modelo": {"dist_km": 390, "vo": 70, "pausas_h": 0.5, "t_extra": 0.4}}
+      ]
+    },
+    {
+      "id": "CHIS",
+      "estado": "Chiapas",
+      "capital": "Tuxtla Gutierrez",
+      "coordenadas": {"lat": 16.7569, "lon": -93.1292},
+      "conexiones": [
+        {"destino": "OAX", "carretera": "MEX-190", "peso_w_horas": 10.70, "detalles_modelo": {"dist_km": 540, "vo": 60, "pausas_h": 0.5, "t_extra": 1.2}},
+        {"destino": "TAB", "carretera": "MEX-195", "peso_w_horas": 4.96, "detalles_modelo": {"dist_km": 250, "vo": 60, "pausas_h": 0.0, "t_extra": 0.8}},
+        {"destino": "VER", "carretera": "MEX-145D", "peso_w_horas": 10.73, "detalles_modelo": {"dist_km": 600, "vo": 65, "pausas_h": 0.5, "t_extra": 1.0}}
+      ]
+    },
+    {
+      "id": "CHIH",
+      "estado": "Chihuahua",
+      "capital": "Chihuahua",
+      "coordenadas": {"lat": 28.6329, "lon": -106.0691},
+      "conexiones": [
+        {"destino": "SON", "carretera": "MEX-16", "peso_w_horas": 13.11, "detalles_modelo": {"dist_km": 690, "vo": 65, "pausas_h": 1.0, "t_extra": 1.5}},
+        {"destino": "DGO", "carretera": "MEX-45", "peso_w_horas": 9.66, "detalles_modelo": {"dist_km": 650, "vo": 75, "pausas_h": 0.5, "t_extra": 0.5}},
+        {"destino": "COAH", "carretera": "MEX-30", "peso_w_horas": 12.46, "detalles_modelo": {"dist_km": 800, "vo": 75, "pausas_h": 1.0, "t_extra": 0.8}}
+      ]
+    },
+    {
+      "id": "CDMX",
+      "estado": "Ciudad de Mexico",
+      "capital": "Ciudad de Mexico",
+      "coordenadas": {"lat": 19.4333, "lon": -99.1333},
+      "conexiones": [
+        {"destino": "MEX", "carretera": "MEX-15D", "peso_w_horas": 2.68, "detalles_modelo": {"dist_km": 65, "vo": 55, "pausas_h": 0.0, "t_extra": 1.5}},
+        {"destino": "MOR", "carretera": "MEX-95D", "peso_w_horas": 2.21, "detalles_modelo": {"dist_km": 85, "vo": 60, "pausas_h": 0.0, "t_extra": 0.8}},
+        {"destino": "PUE", "carretera": "MEX-150D", "peso_w_horas": 3.20, "detalles_modelo": {"dist_km": 130, "vo": 65, "pausas_h": 0.0, "t_extra": 1.2}},
+        {"destino": "HGO", "carretera": "MEX-85D", "peso_w_horas": 2.50, "detalles_modelo": {"dist_km": 90, "vo": 60, "pausas_h": 0.0, "t_extra": 1.0}}
+      ]
+    },
+    {
+      "id": "COAH",
+      "estado": "Coahuila",
+      "capital": "Saltillo",
+      "coordenadas": {"lat": 25.4231, "lon": -100.9919},
+      "conexiones": [
+        {"destino": "CHIH", "carretera": "MEX-30", "peso_w_horas": 12.46, "detalles_modelo": {"dist_km": 800, "vo": 75, "pausas_h": 1.0, "t_extra": 0.8}},
+        {"destino": "NL", "carretera": "MEX-40D", "peso_w_horas": 1.90, "detalles_modelo": {"dist_km": 85, "vo": 65, "pausas_h": 0.0, "t_extra": 0.6}},
+        {"destino": "ZAC", "carretera": "MEX-54", "peso_w_horas": 6.42, "detalles_modelo": {"dist_km": 380, "vo": 70, "pausas_h": 0.5, "t_extra": 0.5}}
+      ]
+    },
+    {
+      "id": "COL",
+      "estado": "Colima",
+      "capital": "Colima",
+      "coordenadas": {"lat": 19.2452, "lon": -103.7240},
+      "conexiones": [
+        {"destino": "JAL", "carretera": "MEX-54D", "peso_w_horas": 3.50, "detalles_modelo": {"dist_km": 195, "vo": 65, "pausas_h": 0.0, "t_extra": 0.5}},
+        {"destino": "MICH", "carretera": "MEX-200", "peso_w_horas": 9.66, "detalles_modelo": {"dist_km": 490, "vo": 60, "pausas_h": 0.5, "t_extra": 1.0}}
+      ]
+    },
+    {
+      "id": "DGO",
+      "estado": "Durango",
+      "capital": "Victoria de Durango",
+      "coordenadas": {"lat": 24.0250, "lon": -104.6675},
+      "conexiones": [
+        {"destino": "CHIH", "carretera": "MEX-45", "peso_w_horas": 9.66, "detalles_modelo": {"dist_km": 650, "vo": 75, "pausas_h": 0.5, "t_extra": 0.5}},
+        {"destino": "SIN", "carretera": "MEX-40D", "peso_w_horas": 10.72, "detalles_modelo": {"dist_km": 480, "vo": 55, "pausas_h": 0.5, "t_extra": 1.5}}
+      ]
+    },
+    {
+      "id": "GTO",
+      "estado": "Guanajuato",
+      "capital": "Guanajuato",
+      "coordenadas": {"lat": 21.0190, "lon": -101.2573},
+      "conexiones": [
+        {"destino": "QRO", "carretera": "MEX-45D", "peso_w_horas": 2.64, "detalles_modelo": {"dist_km": 150, "vo": 70, "pausas_h": 0.0, "t_extra": 0.5}},
+        {"destino": "SLP", "carretera": "MEX-57", "peso_w_horas": 3.17, "detalles_modelo": {"dist_km": 180, "vo": 70, "pausas_h": 0.0, "t_extra": 0.6}},
+        {"destino": "MICH", "carretera": "MEX-43", "peso_w_horas": 3.24, "detalles_modelo": {"dist_km": 185, "vo": 65, "pausas_h": 0.0, "t_extra": 0.4}}
+      ]
+    },
+    {
+      "id": "GRO",
+      "estado": "Guerrero",
+      "capital": "Chilpancingo de los Bravo",
+      "coordenadas": {"lat": 17.5500, "lon": -99.5000},
+      "conexiones": [
+        {"destino": "MOR", "carretera": "MEX-95D", "peso_w_horas": 3.11, "detalles_modelo": {"dist_km": 170, "vo": 65, "pausas_h": 0.0, "t_extra": 0.5}},
+        {"destino": "OAX", "carretera": "MEX-200", "peso_w_horas": 11.15, "detalles_modelo": {"dist_km": 520, "vo": 55, "pausas_h": 0.5, "t_extra": 1.2}}
+      ]
+    },
+    {
+      "id": "HGO",
+      "estado": "Hidalgo",
+      "capital": "Pachuca de Soto",
+      "coordenadas": {"lat": 20.1010, "lon": -98.7591},
+      "conexiones": [
+        {"destino": "CDMX", "carretera": "MEX-85D", "peso_w_horas": 2.50, "detalles_modelo": {"dist_km": 90, "vo": 60, "pausas_h": 0.0, "t_extra": 1.0}},
+        {"destino": "PUE", "carretera": "MEX-119", "peso_w_horas": 2.73, "detalles_modelo": {"dist_km": 145, "vo": 65, "pausas_h": 0.0, "t_extra": 0.5}},
+        {"destino": "VER", "carretera": "MEX-130", "peso_w_horas": 8.20, "detalles_modelo": {"dist_km": 310, "vo": 50, "pausas_h": 0.5, "t_extra": 1.5}},
+        {"destino": "SLP", "carretera": "MEX-85", "peso_w_horas": 7.30, "detalles_modelo": {"dist_km": 390, "vo": 65, "pausas_h": 0.5, "t_extra": 0.8}}
+      ]
+    },
+    {
+      "id": "JAL",
+      "estado": "Jalisco",
+      "capital": "Guadalajara",
+      "coordenadas": {"lat": 20.6767, "lon": -103.3475},
+      "conexiones": [
+        {"destino": "AGS", "carretera": "MEX-70", "peso_w_horas": 3.64, "detalles_modelo": {"dist_km": 220, "vo": 70, "pausas_h": 0.0, "t_extra": 0.5}},
+        {"destino": "COL", "carretera": "MEX-54D", "peso_w_horas": 3.50, "detalles_modelo": {"dist_km": 195, "vo": 65, "pausas_h": 0.0, "t_extra": 0.5}},
+        {"destino": "NAY", "carretera": "MEX-15D", "peso_w_horas": 3.75, "detalles_modelo": {"dist_km": 205, "vo": 65, "pausas_h": 0.0, "t_extra": 0.6}},
+        {"destino": "MICH", "carretera": "MEX-15D", "peso_w_horas": 4.74, "detalles_modelo": {"dist_km": 290, "vo": 70, "pausas_h": 0.0, "t_extra": 0.6}}
+      ]
+    },
+    {
+      "id": "MEX",
+      "estado": "Estado de Mexico",
+      "capital": "Toluca de Lerdo",
+      "coordenadas": {"lat": 19.2925, "lon": -99.6569},
+      "conexiones": [
+        {"destino": "CDMX", "carretera": "MEX-15D", "peso_w_horas": 2.68, "detalles_modelo": {"dist_km": 65, "vo": 55, "pausas_h": 0.0, "t_extra": 1.5}},
+        {"destino": "QRO", "carretera": "MEX-57D", "peso_w_horas": 3.92, "detalles_modelo": {"dist_km": 190, "vo": 65, "pausas_h": 0.0, "t_extra": 1.0}}
+      ]
+    },
+    {
+      "id": "MICH",
+      "estado": "Michoacan",
+      "capital": "Morelia",
+      "coordenadas": {"lat": 19.7683, "lon": -101.1894},
+      "conexiones": [
+        {"destino": "COL", "carretera": "MEX-200", "peso_w_horas": 9.66, "detalles_modelo": {"dist_km": 490, "vo": 60, "pausas_h": 0.5, "t_extra": 1.0}},
+        {"destino": "GTO", "carretera": "MEX-43", "peso_w_horas": 3.24, "detalles_modelo": {"dist_km": 185, "vo": 65, "pausas_h": 0.0, "t_extra": 0.4}},
+        {"destino": "JAL", "carretera": "MEX-15D", "peso_w_horas": 4.74, "detalles_modelo": {"dist_km": 290, "vo": 70, "pausas_h": 0.0, "t_extra": 0.6}}
+      ]
+    },
+    {
+      "id": "MOR",
+      "estado": "Morelos",
+      "capital": "Cuernavaca",
+      "coordenadas": {"lat": 18.9242, "lon": -99.2215},
+      "conexiones": [
+        {"destino": "CDMX", "carretera": "MEX-95D", "peso_w_horas": 2.21, "detalles_modelo": {"dist_km": 85, "vo": 60, "pausas_h": 0.0, "t_extra": 0.8}},
+        {"destino": "GRO", "carretera": "MEX-95D", "peso_w_horas": 3.11, "detalles_modelo": {"dist_km": 170, "vo": 65, "pausas_h": 0.0, "t_extra": 0.5}}
+      ]
+    },
+    {
+      "id": "NAY",
+      "estado": "Nayarit",
+      "capital": "Tepic",
+      "coordenadas": {"lat": 21.5083, "lon": -104.8931},
+      "conexiones": [
+        {"destino": "JAL", "carretera": "MEX-15D", "peso_w_horas": 3.75, "detalles_modelo": {"dist_km": 205, "vo": 65, "pausas_h": 0.0, "t_extra": 0.6}}
+      ]
+    },
+    {
+      "id": "NL",
+      "estado": "Nuevo Leon",
+      "capital": "Monterrey",
+      "coordenadas": {"lat": 25.6667, "lon": -100.3000},
+      "conexiones": [
+        {"destino": "COAH", "carretera": "MEX-40D", "peso_w_horas": 1.90, "detalles_modelo": {"dist_km": 85, "vo": 65, "pausas_h": 0.0, "t_extra": 0.6}},
+        {"destino": "TAMPS", "carretera": "MEX-85", "peso_w_horas": 4.50, "detalles_modelo": {"dist_km": 280, "vo": 70, "pausas_h": 0.0, "t_extra": 0.5}},
+        {"destino": "SLP", "carretera": "MEX-57", "peso_w_horas": 7.96, "detalles_modelo": {"dist_km": 515, "vo": 75, "pausas_h": 0.5, "t_extra": 0.6}}
+      ]
+    },
+    {
+      "id": "OAX",
+      "estado": "Oaxaca",
+      "capital": "Oaxaca de Juarez",
+      "coordenadas": {"lat": 17.0731, "lon": -96.7265},
+      "conexiones": [
+        {"destino": "CHIS", "carretera": "MEX-190", "peso_w_horas": 10.70, "detalles_modelo": {"dist_km": 540, "vo": 60, "pausas_h": 0.5, "t_extra": 1.2}},
+        {"destino": "GRO", "carretera": "MEX-200", "peso_w_horas": 11.15, "detalles_modelo": {"dist_km": 520, "vo": 55, "pausas_h": 0.5, "t_extra": 1.2}},
+        {"destino": "VER", "carretera": "MEX-145D", "peso_w_horas": 7.55, "detalles_modelo": {"dist_km": 400, "vo": 65, "pausas_h": 0.5, "t_extra": 0.9}}
+      ]
+    },
+    {
+      "id": "PUE",
+      "estado": "Puebla",
+      "capital": "Puebla de Zaragoza",
+      "coordenadas": {"lat": 19.0333, "lon": -98.1833},
+      "conexiones": [
+        {"destino": "CDMX", "carretera": "MEX-150D", "peso_w_horas": 3.20, "detalles_modelo": {"dist_km": 130, "vo": 65, "pausas_h": 0.0, "t_extra": 1.2}},
+        {"destino": "HGO", "carretera": "MEX-119", "peso_w_horas": 2.73, "detalles_modelo": {"dist_km": 145, "vo": 65, "pausas_h": 0.0, "t_extra": 0.5}},
+        {"destino": "VER", "carretera": "MEX-150D", "peso_w_horas": 7.09, "detalles_modelo": {"dist_km": 280, "vo": 55, "pausas_h": 0.5, "t_extra": 1.5}},
+        {"destino": "TLAX", "carretera": "MEX-119", "peso_w_horas": 1.02, "detalles_modelo": {"dist_km": 40, "vo": 55, "pausas_h": 0.0, "t_extra": 0.3}}
+      ]
+    },
+    {
+      "id": "QRO",
+      "estado": "Queretaro",
+      "capital": "Santiago de Queretaro",
+      "coordenadas": {"lat": 20.5880, "lon": -100.3899},
+      "conexiones": [
+        {"destino": "GTO", "carretera": "MEX-45D", "peso_w_horas": 2.64, "detalles_modelo": {"dist_km": 150, "vo": 70, "pausas_h": 0.0, "t_extra": 0.5}},
+        {"destino": "MEX", "carretera": "MEX-57D", "peso_w_horas": 3.92, "detalles_modelo": {"dist_km": 190, "vo": 65, "pausas_h": 0.0, "t_extra": 1.0}}
+      ]
+    },
+    {
+      "id": "QROO",
+      "estado": "Quintana Roo",
+      "capital": "Chetumal",
+      "coordenadas": {"lat": 18.5036, "lon": -88.3053},
+      "conexiones": [
+        {"destino": "CAMP", "carretera": "MEX-186", "peso_w_horas": 6.47, "detalles_modelo": {"dist_km": 390, "vo": 70, "pausas_h": 0.5, "t_extra": 0.4}},
+        {"destino": "YUC", "carretera": "MEX-180D", "peso_w_horas": 6.06, "detalles_modelo": {"dist_km": 380, "vo": 75, "pausas_h": 0.5, "t_extra": 0.5}}
+      ]
+    },
+    {
+      "id": "SLP",
+      "estado": "San Luis Potosi",
+      "capital": "San Luis Potosi",
+      "coordenadas": {"lat": 22.1564, "lon": -100.9855},
+      "conexiones": [
+        {"destino": "GTO", "carretera": "MEX-57", "peso_w_horas": 3.17, "detalles_modelo": {"dist_km": 180, "vo": 70, "pausas_h": 0.0, "t_extra": 0.6}},
+        {"destino": "HGO", "carretera": "MEX-85", "peso_w_horas": 7.30, "detalles_modelo": {"dist_km": 390, "vo": 65, "pausas_h": 0.5, "t_extra": 0.8}},
+        {"destino": "NL", "carretera": "MEX-57", "peso_w_horas": 7.96, "detalles_modelo": {"dist_km": 515, "vo": 75, "pausas_h": 0.5, "t_extra": 0.6}},
+        {"destino": "ZAC", "carretera": "MEX-49", "peso_w_horas": 3.11, "detalles_modelo": {"dist_km": 190, "vo": 70, "pausas_h": 0.0, "t_extra": 0.4}},
+        {"destino": "TAMPS", "carretera": "MEX-70", "peso_w_horas": 6.43, "detalles_modelo": {"dist_km": 340, "vo": 65, "pausas_h": 0.5, "t_extra": 0.7}}
+      ]
+    },
+    {
+      "id": "SIN",
+      "estado": "Sinaloa",
+      "capital": "Culiacan Rosales",
+      "coordenadas": {"lat": 24.8089, "lon": -107.3940},
+      "conexiones": [
+        {"destino": "DGO", "carretera": "MEX-40D", "peso_w_horas": 10.72, "detalles_modelo": {"dist_km": 480, "vo": 55, "pausas_h": 0.5, "t_extra": 1.5}}
+      ]
+    },
+    {
+      "id": "SON",
+      "estado": "Sonora",
+      "capital": "Hermosillo",
+      "coordenadas": {"lat": 29.0729, "lon": -110.9559},
+      "conexiones": [
+        {"destino": "BC", "carretera": "MEX-2", "peso_w_horas": 10.06, "detalles_modelo": {"dist_km": 680, "vo": 75, "pausas_h": 0.5, "t_extra": 0.5}},
+        {"destino": "CHIH", "carretera": "MEX-16", "peso_w_horas": 13.11, "detalles_modelo": {"dist_km": 690, "vo": 65, "pausas_h": 1.0, "t_extra": 1.5}}
+      ]
+    },
+    {
+      "id": "TAB",
+      "estado": "Tabasco",
+      "capital": "Villahermosa",
+      "coordenadas": {"lat": 17.9895, "lon": -92.9281},
+      "conexiones": [
+        {"destino": "CAMP", "carretera": "MEX-180", "peso_w_horas": 6.94, "detalles_modelo": {"dist_km": 380, "vo": 65, "pausas_h": 0.5, "t_extra": 0.6}},
+        {"destino": "CHIS", "carretera": "MEX-195", "peso_w_horas": 4.96, "detalles_modelo": {"dist_km": 250, "vo": 60, "pausas_h": 0.0, "t_extra": 0.8}}
+      ]
+    },
+    {
+      "id": "TAMPS",
+      "estado": "Tamaulipas",
+      "capital": "Ciudad Victoria",
+      "coordenadas": {"lat": 23.7369, "lon": -99.1331},
+      "conexiones": [
+        {"destino": "NL", "carretera": "MEX-85", "peso_w_horas": 4.50, "detalles_modelo": {"dist_km": 280, "vo": 70, "pausas_h": 0.0, "t_extra": 0.5}},
+        {"destino": "SLP", "carretera": "MEX-70", "peso_w_horas": 6.43, "detalles_modelo": {"dist_km": 340, "vo": 65, "pausas_h": 0.5, "t_extra": 0.7}}
+      ]
+    },
+    {
+      "id": "TLAX",
+      "estado": "Tlaxcala",
+      "capital": "Tlaxcala de Xicohtencatl",
+      "coordenadas": {"lat": 19.3138, "lon": -98.2411},
+      "conexiones": [
+        {"destino": "PUE", "carretera": "MEX-119", "peso_w_horas": 1.02, "detalles_modelo": {"dist_km": 40, "vo": 55, "pausas_h": 0.0, "t_extra": 0.3}}
+      ]
+    },
+    {
+      "id": "VER",
+      "estado": "Veracruz",
+      "capital": "Xalapa-Enriquez",
+      "coordenadas": {"lat": 19.5437, "lon": -96.9101},
+      "conexiones": [
+        {"destino": "CHIS", "carretera": "MEX-145D", "peso_w_horas": 10.73, "detalles_modelo": {"dist_km": 600, "vo": 65, "pausas_h": 0.5, "t_extra": 1.0}},
+        {"destino": "HGO", "carretera": "MEX-130", "peso_w_horas": 8.20, "detalles_modelo": {"dist_km": 310, "vo": 50, "pausas_h": 0.5, "t_extra": 1.5}},
+        {"destino": "OAX", "carretera": "MEX-145D", "peso_w_horas": 7.55, "detalles_modelo": {"dist_km": 400, "vo": 65, "pausas_h": 0.5, "t_extra": 0.9}},
+        {"destino": "PUE", "carretera": "MEX-150D", "peso_w_horas": 7.09, "detalles_modelo": {"dist_km": 280, "vo": 55, "pausas_h": 0.5, "t_extra": 1.5}}
+      ]
+    },
+    {
+      "id": "YUC",
+      "estado": "Yucatan",
+      "capital": "Merida",
+      "coordenadas": {"lat": 20.9673, "lon": -89.6236},
+      "conexiones": [
+        {"destino": "CAMP", "carretera": "MEX-180", "peso_w_horas": 2.70, "detalles_modelo": {"dist_km": 175, "vo": 70, "pausas_h": 0.0, "t_extra": 0.2}},
+        {"destino": "QROO", "carretera": "MEX-180D", "peso_w_horas": 6.06, "detalles_modelo": {"dist_km": 380, "vo": 75, "pausas_h": 0.5, "t_extra": 0.5}}
+      ]
+    },
+    {
+      "id": "ZAC",
+      "estado": "Zacatecas",
+      "capital": "Zacatecas",
+      "coordenadas": {"lat": 22.7709, "lon": -102.5832},
+      "conexiones": [
+        {"destino": "AGS", "carretera": "MEX-45", "peso_w_horas": 1.94, "detalles_modelo": {"dist_km": 115, "vo": 70, "pausas_h": 0.0, "t_extra": 0.3}},
+        {"destino": "COAH", "carretera": "MEX-54", "peso_w_horas": 6.42, "detalles_modelo": {"dist_km": 380, "vo": 70, "pausas_h": 0.5, "t_extra": 0.5}},
+        {"destino": "SLP", "carretera": "MEX-49", "peso_w_horas": 3.11, "detalles_modelo": {"dist_km": 190, "vo": 70, "pausas_h": 0.0, "t_extra": 0.4}}
+      ]
+    }
+  ]
+}
