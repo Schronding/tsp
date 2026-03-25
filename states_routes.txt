@@ -1,0 +1,237 @@
+Modelado Topológico y Grafo Georreferenciado de la Red Federal de Autotransporte de Carga en México para Algoritmos de Enrutamiento (TSP)Fundamentos del Modelado Logístico y el Grafo Carretero NacionalLa optimización de las cadenas de suministro a nivel nacional exige un conocimiento granular de la geografía, la infraestructura carretera y el marco normativo que rige el transporte de mercancías. La reconfiguración del comercio global, fuertemente marcada por el fenómeno del nearshoring, ha incrementado la presión sobre la red de infraestructura de México, la cual abarca más de 178,609 kilómetros de carreteras pavimentadas, de las cuales 51,311 kilómetros corresponden a carreteras federales y 11,382 kilómetros a autopistas de cuota. En este contexto técnico, la resolución algorítmica de problemas de enrutamiento y logística, como el Problema del Agente Viajero (TSP, por sus siglas en inglés) o el Problema de Enrutamiento de Vehículos (VRP), requiere una Matriz de Adyacencia Ponderada que trascienda la simple medición de distancias euclidianas o kilométricas.A diferencia del modelado básico para vehículos ligeros, el autotransporte de carga articulado opera bajo severas restricciones topográficas, operativas y legales. Las variaciones altimétricas extremas del territorio mexicano, dominado por la Sierra Madre Oriental, la Sierra Madre Occidental y el Eje Neovolcánico Transversal , alteran significativamente la física del movimiento de un tractocamión. A esto se suma la saturación de corredores longitudinales clave (como la carretera MEX-57 y la MEX-15) y los cuellos de botella en los nodos de convergencia metropolitana.En consecuencia, el presente análisis exhaustivo establece un grafo completo e interconectado de los 32 estados de la República Mexicana, tomando como nodos (vértices) a sus respectivas capitales. Este informe proporciona las coordenadas geográficas precisas en formato de grados decimales (latitud y longitud)  y determina las aristas (enlaces carreteros) hacia los estados vecinos más próximos y lógicos para el tránsito de carga. A cada conexión se le asigna un peso estocástico y normativo basado en variables físicas y legales. Finalmente, la totalidad de esta arquitectura de datos se consolida en una estructura JSON optimizada para su inyección directa en motores de resolución de algoritmos de optimización.Arquitectura Paramétrica: Formulación Matemática de PesosPara garantizar el correcto funcionamiento de un algoritmo TSP aplicado al autotransporte pesado en la geografía mexicana, el peso de conexión ($W_{i,j}$) entre un nodo origen ($i$) y un nodo destino ($j$) debe expresarse invariablemente en horas de tránsito logístico real, en lugar de utilizar exclusivamente kilómetros. El modelado kilométrico induce a errores algorítmicos catastróficos, ya que un algoritmo ingenuo podría seleccionar una carretera libre de alta montaña por ser más corta, ignorando que el tiempo de recorrido es el doble que el de una autopista de cuota ligeramente más larga.De acuerdo con los parámetros técnicos de tránsito de carga evaluados, la fórmula algorítmica utilizada para asignar el peso a cada arista del grafo es la siguiente :$$W_{i,j} = \left( \frac{D_{i,j}}{V_o} \right) + P_{NOM087} + T_{extra}$$Esta ecuación se desglosa y fundamenta en los siguientes parámetros estrictos:La Variable de Distancia ($D_{i,j}$)Representa la longitud del tramo carretero en kilómetros, priorizando invariablemente las rutas de altas especificaciones. En México, el transporte de carga pesada privilegia las carreteras federales de cuota, identificadas con la letra "D" (por ejemplo, MEX-15D, MEX-57D, MEX-85D). Estas vías garantizan radios de curvatura más amplios, pendientes más suaves y confinamiento del flujo vehicular, lo cual es vital para unidades de doble remolque.La Velocidad Operativa Promedio ($V_o$)Mientras que un automóvil particular puede mantener velocidades crucero superiores a los 110 km/h, la velocidad promedio de operación ($V_o$) para un tractocamión con caja de 53 pies o configuración "Full" (doble remolque) se sitúa en un rango de 60 a 75 km/h. Esta variable no es estática, sino que sufre penalizaciones dinámicas dependiendo de la orografía:Restricciones de Ascenso y Descenso: En tramos con pendientes pronunciadas, como el ascenso a la meseta central por las Cumbres de Maltrata en la ruta Puebla-Veracruz (MEX-150D) o la subida por La Rumorosa en Baja California (MEX-2), la velocidad de los vehículos pesados cae a niveles inferiores a los 40 km/h.Marco Legal: La NOM-012-SCT sobre pesos y dimensiones máximas impone a los vehículos de doble remolque ("Full") una restricción de velocidad máxima absoluta de 80 km/h, incluso en rectas perfectas. Por tanto, $V_o$ nunca puede superar este umbral en el modelo.Impacto Normativo de las Pausas Obligatorias ($P_{NOM087}$)Este es un diferenciador crítico en la formulación del peso del grafo. La Norma Oficial Mexicana NOM-087-SCT-2-2017 establece de forma obligatoria e irreductible los tiempos de conducción y pausas para los conductores del servicio de autotransporte federal. La normativa exige una pausa de 30 minutos (0.5 horas) por cada 5 horas de conducción continua. Para el algoritmo, esto representa una función escalón que incrementa el peso del enlace si se supera el umbral temporal. Matemáticamente se modela como:
+$$P_{NOM087} = \left\lfloor \frac{\frac{D_{i,j}}{V_o}}{5} \right\rfloor \times 0.5$$Donde $\lfloor x \rfloor$ denota la función piso (el mayor entero menor o igual a x). El algoritmo TSP debe internalizar que los tiempos no son perfectamente lineales.Fricción Logística y Tiempos Extraordinarios ($T_{extra}$)Este parámetro representa el tiempo adicional acumulado por fricciones en la infraestructura. Incluye las demoras predecibles en las plazas de cobro (casetas de peaje), los cruces por zonas metropolitanas densamente pobladas (como el Arco Norte o el periférico de Monterrey), los tiempos de inspección en retenes de seguridad o aduanas interiores, y la congestión recurrente. En corredores altamente saturados, este factor puede añadir entre 0.5 y 1.5 horas al trayecto.Consideraciones Estratégicas para la Implementación del Algoritmo TSPAl integrar la información proporcionada en el software de optimización TSP, es crucial parametrizar el algoritmo para que procese adecuadamente las siguientes anomalías geográficas y operativas inherentes a la red mexicana:Asimetría Matricial (ATSP - Asymmetric Traveling Salesperson Problem): Aunque para simplificar el modelo base se asigna un peso unificado por arista, la realidad topográfica mexicana es fuertemente asimétrica ($W_{i,j} \neq W_{j,i}$). Un camión que viaja de Ciudad de México a Veracruz desciende desde más de 2,200 metros sobre el nivel del mar (msnm) hasta el nivel del mar, operando con freno de motor. El regreso requiere un esfuerzo de tracción masivo, reduciendo la $V_o$ y aumentando el consumo de combustible. El software TSP debería permitir la importación de grafos dirigidos (dígrados) si se busca precisión extrema.No Linealidad del Tiempo Acumulado: El algoritmo TSP típicamente suma los pesos de las aristas ($W_{a,b} + W_{b,c}$). Sin embargo, la regla $P_{NOM087}$ se aplica al tiempo de conducción continuo del operador, no a los segmentos de ruta individuales. Si el viaje $A \rightarrow B$ toma 3 horas y $B \rightarrow C$ toma 3 horas, la suma directa es 6 horas. Pero bajo la norma, a la hora 5 el conductor debe detenerse por 30 minutos. Por lo tanto, el tiempo real $A \rightarrow C$ es 6.5 horas. El algoritmo debe ser capaz de evaluar acumuladores de estado en los vértices o, en su defecto, asumir que el peso de la arista ya prorratea esta pausa (como se ha hecho en este modelo).Topología de Cuello de Botella y "Nodos Hoja" (Leaf Nodes): El territorio mexicano cuenta con dos grandes penínsulas (Baja California y Yucatán). La conectividad terrestre hacia Baja California Sur y Quintana Roo depende de arterias estrechas y sin redundancia. La Carretera Transpeninsular (MEX-1) y la ruta hacia Chetumal (MEX-307) obligan al algoritmo a realizar rutas de ida y vuelta sobre la misma arista, eliminando la posibilidad de formar ciclos eficientes (sub-tours perfectos). El TSP solver debe estar configurado para permitir revisitar aristas o utilizar formulaciones de rutas abiertas (Open TSP) si el destino final se encuentra en estas penínsulas.Ventanas de Tiempo Restrictivas (Time Windows): La variable $T_{extra}$ absorbe contingencias estocásticas; no obstante, debido a las condiciones de seguridad en corredores como el Bajío o el cruce Puebla-Veracruz, los planificadores imponen heurísticas de enrutamiento que prohíben el tránsito nocturno. El software TSP con restricciones de capacidad y tiempo (CVRPTW) es altamente recomendado sobre un TSP estándar para explotar adecuadamente este conjunto de datos.Georreferenciación Topológica de los Nodos (Vértices del Grafo)La cimentación del grafo requiere la definición exacta de los 32 nodos que representan a las entidades federativas mediante sus capitales. A continuación se presenta el marco de referencia espacial, detallando latitud y longitud en grados decimales, necesarios para el cálculo de heurísticas espaciales en el algoritmo (como el cálculo de la distancia Haversine, utilizada a menudo para acotar el espacio de búsqueda).ID NodoEntidad FederativaCapitalLatitud (N)Longitud (O)AGSAguascalientesAguascalientes21.8798-102.2960BCBaja CaliforniaMexicali32.6633-115.4678BCSBaja California SurLa Paz24.1426-110.3127CAMPCampecheSan Francisco de Campeche19.8301-90.5349CHISChiapasTuxtla Gutiérrez16.7569-93.1292CHIHChihuahuaChihuahua28.6329-106.0691CDMXCiudad de MéxicoCiudad de México19.4333-99.1333COAHCoahuilaSaltillo25.4231-100.9919COLColimaColima19.2452-103.7240DGODurangoVictoria de Durango24.0250-104.6675GTOGuanajuatoGuanajuato21.0190-101.2573GROGuerreroChilpancingo de los Bravo17.5500-99.5000HGOHidalgoPachuca de Soto20.1010-98.7591JALJaliscoGuadalajara20.6767-103.3475MEXEstado de MéxicoToluca de Lerdo19.2925-99.6569MICHMichoacánMorelia19.7683-101.1894MORMorelosCuernavaca18.9242-99.2215NAYNayaritTepic21.5083-104.8931NLNuevo LeónMonterrey25.6667-100.3000OAXOaxacaOaxaca de Juárez17.0731-96.7265PUEPueblaPuebla de Zaragoza19.0333-98.1833QROQuerétaroSantiago de Querétaro20.5880-100.3899QROOQuintana RooChetumal18.5036-88.3053SLPSan Luis PotosíSan Luis Potosí22.1564-100.9855SINSinaloaCuliacán Rosales24.8089-107.3940SONSonoraHermosillo29.0729-110.9559TABTabascoVillahermosa17.9895-92.9281TAMPSTamaulipasCiudad Victoria23.7369-99.1331TLAXTlaxcalaTlaxcala de Xicohténcatl19.3138-98.2411VERVeracruzXalapa-Enríquez19.5437-96.9101YUCYucatánMérida20.9673-89.6236ZACZacatecasZacatecas22.7709-102.5832Análisis Topológico de Aristas y Parametrización Logística por RegiónLa matriz de adyacencias se construye evaluando la interconexión directa o de primer grado geográfico entre los estados, empleando la red federal de carreteras. Para cada nodo, se identifican las rutas troncales hacia sus vecinos más lógicos desde una perspectiva de optimización de cadena de suministro. La parametrización del peso ($W$) aplica rigurosamente la formulación previamente expuesta.Región Península de Baja California y NoroesteEl aislamiento relativo de la Península de Baja California define la estructura del subgrafo en el extremo noroccidente de México, limitando las alternativas de enrutamiento y forzando flujos longitudinales sobre corredores saturados o de infraestructura restringida.Baja California (Mexicali): El nodo fronterizo de Baja California actúa como la única puerta de entrada terrestre al resto de la península. Su conexión cardinal hacia el macizo continental es con el estado de Sonora a través de la Carretera Federal 2 (MEX-2), atravesando el desafiante entorno del desierto de Altar. La distancia aproximada a Hermosillo es de 680 km. Dado el terreno plano pero expuesto a condiciones térmicas extremas, la velocidad operativa ($V_o$) se estima en 75 km/h. La duración requiere al menos un descanso normativo ($P_{NOM087}$ = 0.5 h), más revisiones militares ($T_{extra}$ = 0.5 h), resultando en un peso logístico $W \approx 10.06$ horas. Su conexión hacia el sur, con Baja California Sur, depende exclusivamente de la Carretera Transpeninsular (MEX-1).Baja California Sur (La Paz): Este nodo presenta uno de los mayores desafíos algorítmicos. Conectado a Mexicali a través de la MEX-1, la distancia de aproximadamente 1,470 km  se recorre sobre una infraestructura predominantemente de dos carriles, reduciendo la $V_o$ a 65 km/h. Las más de 22 horas de conducción ininterrumpida obligan a incluir 2.0 horas de descansos ($P_{NOM087}$), junto con un alto $T_{extra}$ (1.5 horas) por retenes fitosanitarios y cruces de poblaciones, consolidando un $W \approx 26.11$ horas.Sonora (Hermosillo): La capital sonorense es un eje articulador que canaliza el flujo del Pacífico hacia la frontera estadounidense (Nogales) mediante la MEX-15D. Hacia el sur, colinda con Sinaloa (Culiacán) por la misma vía MEX-15D, una autopista de altas especificaciones que permite cubrir los 700 km a un $V_o$ de 75 km/h ($W \approx 10.63$ horas). Su conexión oriental hacia Chihuahua se realiza a través de la carretera MEX-16, conocida topográficamente como "La Gran Visión". Esta ruta de montaña abarca 690 km pero restringe severamente la velocidad a 65 km/h o menos, exigiendo un $T_{extra}$ elevado por curvas pronunciadas ($W \approx 13.11$ horas).Sinaloa (Culiacán Rosales): Funciona como un corredor de alto rendimiento agrícola a lo largo de la costa del Pacífico. Enlazada firmemente al norte con Sonora (MEX-15D) y al sur con Nayarit por la misma arteria troncal. La distancia a Tepic es de 500 km, con una $V_o$ sostenida de 70 km/h y peajes que suman fricción, dejando un peso de $W \approx 8.44$ horas. Hacia el oriente, la conexión con Durango se realiza a través de la súper carretera MEX-40D, un hito de la ingeniería civil que cruza el Espinazo del Diablo (Puente Baluarte). Aunque la infraestructura es superior, el ascenso reduce la $V_o$ a 55 km/h para los 480 km de trayecto, con un $T_{extra}$ de 1.5 horas por pendientes, resultando en un $W \approx 10.72$ horas.Región Norte, Altiplano y NoresteEl vasto territorio del norte de México concentra el volumen primario de comercio exterior (cross-border) hacia Estados Unidos. Sus amplias planicies desérticas permiten velocidades operativas altas, pero las distancias masivas incrementan exponencialmente el costo temporal del enrutamiento.Chihuahua (Chihuahua): El estado de mayor extensión del país  dirige sus salidas hacia el sur para vincularse con Durango mediante la carretera MEX-45 (650 km, $V_o$ = 75 km/h, $W \approx 9.66$ horas). Su colindancia oriental con Coahuila (Saltillo) implica un cruce trans-desértico vía la MEX-30 de aproximadamente 800 km. La soledad de la ruta obliga a paradas estructuradas ($P_{NOM087}$ = 1.0 h), arrojando un peso de $W \approx 12.46$ horas.Durango (Victoria de Durango): Además de su compleja conexión con Sinaloa (MEX-40D) y el norte hacia Chihuahua (MEX-45), su principal salida hacia el flujo central se da vía la MEX-45 hacia Zacatecas. Este segmento es eficiente, cubriendo 290 km en planicie a una $V_o$ de 70 km/h. La ausencia de pausas obligatorias prolongadas permite un tiempo muy competitivo de $W \approx 4.54$ horas.Coahuila (Saltillo): Su ubicación geográfica la convierte en el preludio a la frontera de Nuevo Laredo (vía Monterrey). Su colindancia con Nuevo León es inmediata; la autopista MEX-40D une a Saltillo con Monterrey en apenas 85 km. A una $V_o$ conservadora de 65 km/h por el tráfico denso y un $T_{extra}$ de 0.6 horas en peajes e ingresos industriales, se consolida un enlace ultracorto de $W \approx 1.90$ horas. Hacia el sur, se vincula con Zacatecas mediante la carretera MEX-54 (380 km, $W \approx 6.42$ horas).Nuevo León (Monterrey): El principal nodo industrial de México. Monterrey distribuye y consolida la manufactura del país. Al margen de su conexión rápida con Saltillo, tiene una vital arteria sureña hacia San Luis Potosí a través de la carretera MEX-57 (515 km). Esta vía soporta el mayor tonelaje de carga del país; a una $V_o$ de 75 km/h y una parada de norma, más la fricción de Los Chorros, el enlace suma $W \approx 7.96$ horas. Hacia el Golfo, se conecta con Ciudad Victoria (Tamaulipas) mediante la MEX-85 (280 km, $W \approx 4.50$ horas).Tamaulipas (Ciudad Victoria): Actúa como el amortiguador logístico entre el flujo fronterizo, el polo industrial regiomontano y el Golfo de México. Hacia Nuevo León emplea la MEX-85. Hacia San Luis Potosí, la accidentada MEX-70 (340 km) limita la $V_o$ a 65 km/h debido a las sinuosidades de la sierra oriental ($W \approx 6.43$ horas). Hacia el sur, la carretera costera MEX-180 comunica con Veracruz (480 km), absorbiendo tráfico pesado continuo que añade demoras, resultando en $W \approx 8.68$ horas.Región Occidente y Bajío CentralEsta zona es el núcleo de la producción automotriz y agroindustrial de exportación. Las distancias entre capitales se reducen significativamente, elevando la densidad del grafo y multiplicando las alternativas de enrutamiento, haciendo que el algoritmo TSP enfrente una mayor complejidad combinatoria.Nayarit (Tepic): El puente hacia el occidente. Al oriente de su conexión con Sinaloa, la autopista MEX-15D se adentra en el territorio jalisciense, superando el relieve de Plan de Barrancas. Los 205 km hacia Guadalajara se operan a una $V_o$ de 65 km/h debido a los extensos gradientes, resultando en un $W \approx 3.75$ horas, incorporando tiempos de peaje.Jalisco (Guadalajara): Como hub metropolitano hiper-conector , Jalisco expande sus rutas radicalmente. Hacia Colima, la autopista MEX-54D soporta el tráfico de contenedores del Pacífico (195 km, $W \approx 3.50$ horas). Hacia Aguascalientes, la carretera MEX-70 o alternativas estatales demandan $W \approx 3.64$ horas (220 km). La salida natural hacia el Bajío se traza vía la MEX-80 hacia Guanajuato (270 km, $W \approx 4.85$ horas) , mientras que el flujo hacia el centro del país persigue la MEX-15D hacia Morelia (Michoacán), recorriendo 290 km  a 70 km/h ($W \approx 4.74$ horas).Colima (Colima): Su rol principal es despachar importaciones marítimas. Las rutas troncales se restringen a la mencionada conexión con Jalisco (MEX-54D) y a la costera MEX-200 hacia Michoacán (490 km hasta los enlaces con Morelia). La MEX-200 es tortuosa y baja la $V_o$ a 60 km/h, disparando el peso a $W \approx 9.66$ horas tras aplicar las reglas de la NOM-087.Michoacán (Morelia): La capital purépecha cuenta con adyacencias críticas a través de la autopista de Occidente MEX-15D. Hacia el nororiente, colinda con Guanajuato a través de la carretera MEX-43 (185 km, $W \approx 3.24$ horas). Su conexión de mayor desgaste orográfico es hacia el Estado de México (Toluca) por la MEX-15D a través de la densa sierra de Mil Cumbres. A pesar de ser autopista (230 km), la $V_o$ disminuye dramáticamente por ascensos, registrando un $W \approx 4.63$ horas. Hacia el sur, se enlaza limitadamente con Guerrero mediante la transversal MEX-200 (430 km, $W \approx 9.31$ horas).Aguascalientes (Aguascalientes): Integrada fuertemente al bloque del Bajío , conecta hacia el norte con Zacatecas por la MEX-45 (115 km), un enlace fluido que no activa las pausas de la norma y ostenta un $W \approx 1.94$ horas. Su enlace occidental se da con Jalisco mediante la carretera 70.Zacatecas (Zacatecas): Entidad de enlace transicional entre el Bajío y el norte. Recibe el tráfico desde Aguascalientes y se bifurca hacia Durango (MEX-45) y Coahuila (MEX-54). Crucialmente, canaliza carga hacia San Luis Potosí a través de la MEX-49 (190 km) , generando un puente logístico de $W \approx 3.11$ horas bajo operaciones fluidas.Guanajuato (Guanajuato): Eje diametral del Bajío. Se enlaza de regreso con Jalisco y Michoacán. Hacia el oriente, la conexión a Querétaro vía la MEX-45D es extremadamente densa en volumen industrial , recorriendo 150 km a un $V_o$ de 70 km/h. La saturación de casetas impone un $T_{extra}$ notable, promediando un $W \approx 2.64$ horas. Su conexión con San Luis Potosí utiliza el empalme de la MEX-57 (180 km, $W \approx 3.17$ horas).Querétaro (Santiago de Querétaro): Funciona como la válvula logística principal hacia el Valle de México. Recibe a Guanajuato (MEX-45D) y conecta directamente al norte con San Luis Potosí por la vital MEX-57 (200 km, $W \approx 3.65$ horas). Hacia el Estado de México (Toluca/zona metropolitana), la saturada Autopista MEX-57D (190 km) sufre embotellamientos crónicos en casetas como Palmillas, elevando el $T_{extra}$ y arrojando un peso de $W \approx 3.92$ horas.San Luis Potosí (San Luis Potosí): El nodo de mayor centralidad de intermediación (betweenness centrality) del grafo nacional. Distribuye la carga en forma de estrella: al norte a Nuevo León (MEX-57, 515 km, 7.96 h) ; al sur a Querétaro y Guanajuato; al occidente a Zacatecas (MEX-49) ; y al oriente hacia la costa tamaulipeca vía la MEX-70 (340 km, 6.43 h). Optimizar rutas alrededor de este nodo garantiza reducciones drásticas en los costos totales del TSP.Corredor Central MetropolitanoLa zona con la mayor densidad demográfica y vehicular. Los tiempos de tránsito aquí se dictan por la fricción estructural y el tráfico ($T_{extra}$), más que por las distancias puras. Los algoritmos deben penalizar severamente los cruces urbanos que no utilizan libramientos.Estado de México (Toluca de Lerdo): Este nodo envuelve operativamente a la capital del país. La carga proveniente de Michoacán y Querétaro utiliza el Estado de México como distribuidor hacia el sureste o el Golfo a través del Arco Norte (evitando la CDMX). Su conexión interna con la Ciudad de México vía la autopista MEX-15D (65 km) presenta un altísimo grado de resistencia por congestión en zonas como La Marquesa, bajando la $V_o$ a 55 km/h o menos y asumiendo un $T_{extra}$ de 1.5 horas, totalizando $W \approx 2.68$ horas. Con Hidalgo (Pachuca), la ruta de 120 km (vía Arco Norte o MEX-85D) consume aproximadamente $W \approx 2.80$ horas.Ciudad de México (CDMX): Su geografía céntrica restringe el flujo. Además de colindar con el Estado de México, ejerce presión hacia el sur hacia Cuernavaca (Morelos) por la Autopista del Sol MEX-95D (85 km, $W \approx 2.21$ horas). Al oriente, su enlace natural es con Puebla mediante la autopista MEX-150D , un trayecto de 130 km que se escala por la Sierra Nevada. A una $V_o$ conservadora de 65 km/h, sin activar pautas de la NOM pero sumando la salida de aduanas metropolitanas, el enlace arroja $W \approx 3.20$ horas. Hacia Hidalgo, la ruta MEX-85D (90 km) refleja un $W \approx 2.50$ horas.Morelos (Cuernavaca): Nodo de descenso rápido que canaliza flujo capitalino hacia el Pacífico sur. Su conexión reversa con la CDMX (MEX-95D) ya fue expuesta. Hacia el sur, colinda extensamente con Guerrero utilizando el continuo de la MEX-95D (170 km, $W \approx 3.11$ horas). Al oriente, establece conexión con Puebla a través de la MEX-160 o la Autopista Siglo XXI de Morelos (150 km), consolidando un tiempo logístico de $W \approx 3.20$ horas.Puebla (Puebla de Zaragoza): Es el nodo "embudo" hacia el bloque sur-sureste del país. Recibe influencias de la CDMX, el Estado de México e Hidalgo. Hacia Hidalgo (Pachuca), utiliza el Arco Norte o la MEX-119 (145 km, $W \approx 2.73$ horas). Su colindancia con la pequeña escala geográfica de Tlaxcala a través de la MEX-119 es de apenas 40 km ($W \approx 1.02$ horas). Su rol crítico, no obstante, radica en el descenso hacia Veracruz mediante la MEX-150D. Este tramo de 280 km contiene las infames Cumbres de Maltrata. Para un tractocamión full, la $V_o$ en el tramo crítico puede caer bajo los 40 km/h, arrastrando el promedio a 55 km/h. Tras aplicar descansos ($P_{NOM087}$) y tiempos de seguridad/casetas (1.5 h), el recorrido suma un masivo $W \approx 7.09$ horas. Hacia Oaxaca, utiliza la MEX-135D por un terreno igualmente fragmentado (340 km, $W \approx 6.96$ horas).Tlaxcala (Tlaxcala de Xicohténcatl): Inmersa en la zona de influencia poblana , se apoya en rutas interestatales y la MEX-136 para comunicarse con el Estado de México (140 km, $W \approx 3.13$ horas) , además de su contigüidad expedita con Puebla (MEX-119).Hidalgo (Pachuca de Soto): Como válvula de escape del norte del Valle de México, transfiere flujo entre el Estado de México y Puebla. Además, mantiene un enlace transversal hacia Veracruz mediante la carretera MEX-130. Esta vía de montaña serrana comprende aproximadamente 310 km de trazado difícil que aplasta la $V_o$ a 50 km/h. Con la fricción acumulada y las pausas impuestas, el tiempo salta a un severo $W \approx 8.20$ horas. Hacia el norte, conecta con San Luis Potosí mediante la histórica ruta MEX-85 (390 km, $W \approx 7.30$ horas).Corredor Sur, Istmo y SuresteLas aristas en esta macro-región están condicionadas por cuencas hidrológicas, selvas tropicales y fallas geológicas. Los $W_{i,j}$ sufren incrementos estructurales debido a la carencia de autopistas de cuota modernas en varias secciones interconectadas.Guerrero (Chilpancingo de los Bravo): Su cordón principal proviene de Morelos (MEX-95D). Se relaciona longitudinalmente con Michoacán y Oaxaca mediante la serpenteante Carretera Costera del Pacífico (MEX-200). El enlace hacia Oaxaca (520 km) a través de zonas rurales y relieves accidentados no permite una $V_o$ superior a 55 km/h. Integrando topes comunitarios (factor importante de $T_{extra}$ en la zona, 1.2 h) y el protocolo de pausas, se genera un peso gravoso de $W \approx 11.15$ horas.Oaxaca (Oaxaca de Juárez): Geográficamente compleja , se alimenta de Puebla (MEX-135D). Hacia el oriente, su confluencia con Chiapas emplea la carretera Panamericana MEX-190 (540 km), con pendientes continuas ($V_o$ = 60 km/h, $W \approx 10.70$ horas). Para acceder al Golfo, se desplaza hacia Veracruz usando el corredor del Istmo (MEX-145D), un trayecto inter-oceánico de 400 km con condiciones de viento lateral fuertes que castigan la aerodinámica (La Ventosa), requiriendo un estimado de $W \approx 7.55$ horas.Veracruz (Xalapa-Enríquez): El "muro costero" que divide el centro del sureste. Recibe carga del norte desde Tamaulipas (MEX-180, 480 km, $W \approx 8.68$ horas)  y desde Puebla (MEX-150D). Colinda con Oaxaca (MEX-145D) y en el extremo sur, sirve de puente hacia el sureste maya. La conexión con Tabasco (Villahermosa) fluye por la carretera MEX-180 a lo largo de 460 km de planicies tropicales. Con una $V_o$ de 65 km/h e incluyendo aduanas adyacentes a Coatzacoalcos, arroja $W \approx 8.57$ horas. Su conexión transversal con Chiapas fluye también de la matriz de la MEX-145D hacia Tuxtla Gutiérrez (600 km, $W \approx 10.73$ horas).Chiapas (Tuxtla Gutiérrez): Enclavado en el sur , recibe tráfico de Oaxaca (MEX-190) y Veracruz (MEX-145D). Su salida comercial principal hacia la península transita hacia el norte para empalmar con Tabasco utilizando la carretera MEX-195 (250 km). Las curvas serranas limitan la marcha, consolidando $W \approx 4.96$ horas.Tabasco (Villahermosa): La llanura inundable por excelencia y distribuidor petrolero. Se posiciona como vértice central entre Veracruz (MEX-180), Chiapas (MEX-195) y la entrada de la Península de Yucatán, colindando con Campeche. El enlace a Campeche continúa por la vía MEX-180, bordeando el litoral. Los 380 km se superan a 65 km/h, con fricción aduanal intermitente, registrando $W \approx 6.94$ horas.Corredor Península de YucatánEl cierre del sistema logístico. Un diseño de TSP que involucre esta región se topa con un entorno de callejón sin salida (dead-end topological structure) en el extremo de Quintana Roo, obligando a flujos de retorno si las mercancías no optan por el cabotaje marítimo portuario (Puerto Progreso).Campeche (San Francisco de Campeche): Puerta peninsular. Distribuye el tráfico que arriba de Tabasco (MEX-180). Hacia el interior de la península, se conecta ágilmente con Yucatán (Mérida) por la MEX-180; una recta prístina de 175 km operada a 70 km/h con mínima fricción ($W \approx 2.70$ horas). Alternativamente, el tráfico cruza la base de la península hacia Quintana Roo (Chetumal) mediante el corredor selvático MEX-186 (390 km, $W \approx 6.47$ horas).Yucatán (Mérida): Nodo final que retroalimenta la cadena de suministro o distribuye a los polos turísticos del Caribe. Conectada a Campeche, se extiende hacia Quintana Roo utilizando la ruta de cuota MEX-180D. Los 380 km hacia Chetumal o la franja sur consumen un equivalente logístico estructurado de $W \approx 6.06$ horas. Mérida destaca como un outlier donde las simulaciones de cabotaje marítimo contra arrastre terrestre se igualan en competitividad económica, a pesar de los tiempos muertos portuarios.Quintana Roo (Chetumal): Vértice terminal en la frontera con Belice. Recibe el consolidado desde Yucatán vía la red MEX-307/180D (390 km, $W \approx 6.57$ horas)  o el tránsito que cruzó la base desde Campeche mediante la MEX-186 (390 km, $W \approx 6.47$ horas). Al operar un TSP con este nodo, el algoritmo se ve invariablemente forzado a "rebobinar" su camino a través de la península para retomar el macizo continental.Compendio Tabular de la Matriz de Aristas InterestatalesLa siguiente tabla resume los enlaces críticos y el desglose de sus pesos algorítmicos. Esta formulación permite a cualquier planificador de la cadena de suministro diagnosticar exactamente qué factor (distancia bruta, topografía o normatividad) incrementa la latencia de la ruta.Nodo OrigenNodo DestinoInfraestructura (Ruta)D (km)Vo​ (km/h)PNOM087​ (h)Textra​ (h)Peso (W) (h)AGSZACMEX-45115700.00.31.94AGSJALMEX-70220700.00.53.64BCSONMEX-2680750.50.510.06BCBCSMEX-11470652.01.526.11CAMPYUCMEX-180175700.00.22.70CAMPTABMEX-180380650.50.66.94CAMPQROOMEX-186390700.50.46.47CHISOAXMEX-190540600.51.210.70CHISTABMEX-195250600.00.84.96CHISVERMEX-145D600650.51.010.73CHIHSONMEX-16690651.01.513.11CHIHDGOMEX-45650750.50.59.66CHIHCOAHMEX-30800751.00.812.46CDMXMEXMEX-15D65550.01.52.68CDMXMORMEX-95D85600.00.82.21CDMXPUEMEX-150D130650.01.23.20CDMXHGOMEX-85D90600.01.02.50COAHNLMEX-40D85650.00.61.90COAHZACMEX-54380700.50.56.42COLJALMEX-54D195650.00.53.50COLMICHMEX-200490600.51.09.66DGOSINMEX-40D480550.51.510.72GTOQROMEX-45D150700.00.52.64GTOSLPMEX-57180700.00.63.17GTOMICHMEX-43185650.00.43.24GROMORMEX-95D170650.00.53.11GROOAXMEX-200520550.51.211.15HGOPUEMEX-119145650.00.52.73HGOVERMEX-130310500.51.58.20HGOSLPMEX-85390650.50.87.30JALNAYMEX-15D205650.00.63.75JALMICHMEX-15D290700.00.64.74MEXQROMEX-57D190650.01.03.92NLTAMPSMEX-85280700.00.54.50NLSLPMEX-57515750.50.67.96OAXVERMEX-145D400650.50.97.55PUEVERMEX-150D280550.51.57.09PUETLAXMEX-11940550.00.31.02SLPZACMEX-49190700.00.43.11SLPTAMPSMEX-70340650.50.76.43YUCQROOMEX-180D380750.50.56.06(Nota metodológica del modelo: Los pesos y distancias asumen un promedio ponderado que abstrae las diferencias bi-direccionales de ascenso/descenso, consolidando una red utilizable para algoritmos TSP métricos tradicionales. Rutas inversas comparten la ponderación principal. Nodos enumerados de forma unilateral en la tabla poseen conectividad simétrica garantizada hacia sus contrapartes en el archivo JSON adjunto).Repositorio de Datos Topológicos (Formato JSON)La estructuración digital del modelo matemático-geográfico descrito se empaqueta en el siguiente objeto JSON. Este modelo está diseñado para ser parseado directamente por el software de optimización de rutas del agente viajero (TSP), conteniendo toda la metadata crítica para la construcción matricial del grafo interno y sus restricciones algorítmicas expuestas previamente.JSON{
+  "graph_metadata": {
+    "description": "Grafo Algorítmico y Coordenadas del Autotransporte de Carga (México)",
+    "target_model": "Traveling Salesperson Problem (TSP) / Capacitated VRP",
+    "spatial_reference": "WGS84 (Grados Decimales)",
+    "algorithm_tuning_advice": {
+      "warning": "El grafo presenta asimetría en tiempos de recorrido debido a la altimetría de las cadenas montañosas y embudos peninsulares.",
+      "time_calculation": "Weight (W) = (Distance_km / Vo) + P_NOM087 + T_extra",
+      "regulatory_constraint": "NOM-087-SCT-2-2017 implementada (0.5h de pausa por cada 5.0h continuas de tránsito logístico)."
+    }
+  },
+  "nodes":
+    },
+    {
+      "id": "BC",
+      "estado": "Baja California",
+      "capital": "Mexicali",
+      "coordenadas": {"lat": 32.6633, "lon": -115.4678},
+      "aristas_vecinas":
+    },
+    {
+      "id": "BCS",
+      "estado": "Baja California Sur",
+      "capital": "La Paz",
+      "coordenadas": {"lat": 24.1426, "lon": -110.3127},
+      "aristas_vecinas":
+    },
+    {
+      "id": "CAMP",
+      "estado": "Campeche",
+      "capital": "San Francisco de Campeche",
+      "coordenadas": {"lat": 19.8301, "lon": -90.5349},
+      "aristas_vecinas":
+    },
+    {
+      "id": "CHIS",
+      "estado": "Chiapas",
+      "capital": "Tuxtla Gutiérrez",
+      "coordenadas": {"lat": 16.7569, "lon": -93.1292},
+      "aristas_vecinas":
+    },
+    {
+      "id": "CHIH",
+      "estado": "Chihuahua",
+      "capital": "Chihuahua",
+      "coordenadas": {"lat": 28.6329, "lon": -106.0691},
+      "aristas_vecinas":
+    },
+    {
+      "id": "CDMX",
+      "estado": "Ciudad de México",
+      "capital": "Ciudad de México",
+      "coordenadas": {"lat": 19.4333, "lon": -99.1333},
+      "aristas_vecinas":
+    },
+    {
+      "id": "COAH",
+      "estado": "Coahuila",
+      "capital": "Saltillo",
+      "coordenadas": {"lat": 25.4231, "lon": -100.9919},
+      "aristas_vecinas":
+    },
+    {
+      "id": "COL",
+      "estado": "Colima",
+      "capital": "Colima",
+      "coordenadas": {"lat": 19.2452, "lon": -103.7240},
+      "aristas_vecinas":
+    },
+    {
+      "id": "DGO",
+      "estado": "Durango",
+      "capital": "Victoria de Durango",
+      "coordenadas": {"lat": 24.0250, "lon": -104.6675},
+      "aristas_vecinas":
+    },
+    {
+      "id": "GTO",
+      "estado": "Guanajuato",
+      "capital": "Guanajuato",
+      "coordenadas": {"lat": 21.0190, "lon": -101.2573},
+      "aristas_vecinas":
+    },
+    {
+      "id": "GRO",
+      "estado": "Guerrero",
+      "capital": "Chilpancingo de los Bravo",
+      "coordenadas": {"lat": 17.5500, "lon": -99.5000},
+      "aristas_vecinas":
+    },
+    {
+      "id": "HGO",
+      "estado": "Hidalgo",
+      "capital": "Pachuca de Soto",
+      "coordenadas": {"lat": 20.1010, "lon": -98.7591},
+      "aristas_vecinas":
+    },
+    {
+      "id": "JAL",
+      "estado": "Jalisco",
+      "capital": "Guadalajara",
+      "coordenadas": {"lat": 20.6767, "lon": -103.3475},
+      "aristas_vecinas":
+    },
+    {
+      "id": "MEX",
+      "estado": "Estado de México",
+      "capital": "Toluca de Lerdo",
+      "coordenadas": {"lat": 19.2925, "lon": -99.6569},
+      "aristas_vecinas":
+    },
+    {
+      "id": "MICH",
+      "estado": "Michoacán",
+      "capital": "Morelia",
+      "coordenadas": {"lat": 19.7683, "lon": -101.1894},
+      "aristas_vecinas":
+    },
+    {
+      "id": "MOR",
+      "estado": "Morelos",
+      "capital": "Cuernavaca",
+      "coordenadas": {"lat": 18.9242, "lon": -99.2215},
+      "aristas_vecinas":
+    },
+    {
+      "id": "NAY",
+      "estado": "Nayarit",
+      "capital": "Tepic",
+      "coordenadas": {"lat": 21.5083, "lon": -104.8931},
+      "aristas_vecinas":
+    },
+    {
+      "id": "NL",
+      "estado": "Nuevo León",
+      "capital": "Monterrey",
+      "coordenadas": {"lat": 25.6667, "lon": -100.3000},
+      "aristas_vecinas":
+    },
+    {
+      "id": "OAX",
+      "estado": "Oaxaca",
+      "capital": "Oaxaca de Juárez",
+      "coordenadas": {"lat": 17.0731, "lon": -96.7265},
+      "aristas_vecinas":
+    },
+    {
+      "id": "PUE",
+      "estado": "Puebla",
+      "capital": "Puebla de Zaragoza",
+      "coordenadas": {"lat": 19.0333, "lon": -98.1833},
+      "aristas_vecinas":
+    },
+    {
+      "id": "QRO",
+      "estado": "Querétaro",
+      "capital": "Santiago de Querétaro",
+      "coordenadas": {"lat": 20.5880, "lon": -100.3899},
+      "aristas_vecinas":
+    },
+    {
+      "id": "QROO",
+      "estado": "Quintana Roo",
+      "capital": "Chetumal",
+      "coordenadas": {"lat": 18.5036, "lon": -88.3053},
+      "aristas_vecinas":
+    },
+    {
+      "id": "SLP",
+      "estado": "San Luis Potosí",
+      "capital": "San Luis Potosí",
+      "coordenadas": {"lat": 22.1564, "lon": -100.9855},
+      "aristas_vecinas":
+    },
+    {
+      "id": "SIN",
+      "estado": "Sinaloa",
+      "capital": "Culiacán Rosales",
+      "coordenadas": {"lat": 24.8089, "lon": -107.3940},
+      "aristas_vecinas":
+    },
+    {
+      "id": "SON",
+      "estado": "Sonora",
+      "capital": "Hermosillo",
+      "coordenadas": {"lat": 29.0729, "lon": -110.9559},
+      "aristas_vecinas":
+    },
+    {
+      "id": "TAB",
+      "estado": "Tabasco",
+      "capital": "Villahermosa",
+      "coordenadas": {"lat": 17.9895, "lon": -92.9281},
+      "aristas_vecinas":
+    },
+    {
+      "id": "TAMPS",
+      "estado": "Tamaulipas",
+      "capital": "Ciudad Victoria",
+      "coordenadas": {"lat": 23.7369, "lon": -99.1331},
+      "aristas_vecinas":
+    },
+    {
+      "id": "TLAX",
+      "estado": "Tlaxcala",
+      "capital": "Tlaxcala de Xicohténcatl",
+      "coordenadas": {"lat": 19.3138, "lon": -98.2411},
+      "aristas_vecinas": [
+        {"destino": "PUE", "carretera": "MEX-119", "peso_w_horas": 1.02, "detalles_modelo": {"dist_km": 40, "vo": 55, "pausas_h": 0.0, "t_extra": 0.3}},
+        {"destino": "MEX", "carretera": "MEX-136", "peso_w_horas": 3.13, "detalles_modelo": {"dist_km": 140, "vo": 60, "pausas_h": 0.0, "t_extra": 0.8}}
+      ]
+    },
+    {
+      "id": "VER",
+      "estado": "Veracruz",
+      "capital": "Xalapa-Enríquez",
+      "coordenadas": {"lat": 19.5437, "lon": -96.9101},
+      "aristas_vecinas":
+    },
+    {
+      "id": "YUC",
+      "estado": "Yucatán",
+      "capital": "Mérida",
+      "coordenadas": {"lat": 20.9673, "lon": -89.6236},
+      "aristas_vecinas":
+    },
+    {
+      "id": "ZAC",
+      "estado": "Zacatecas",
+      "capital": "Zacatecas",
+      "coordenadas": {"lat": 22.7709, "lon": -102.5832},
+      "aristas_vecinas":
+    }
+  ]
+}
+Conclusiones y Recomendaciones de ImplementaciónEl modelo de datos y grafo proporcionado establece un cimiento analítico robusto y dimensionado a la realidad del autotransporte de carga en México. Sustituir las heurísticas euclidianas estándar por un modelo logístico de horas efectivas ponderadas, que incluye las fricciones normativas de la NOM-087-SCT-2-2017 y las fricciones topográficas del territorio, asegura que las simulaciones del TSP resulten en hojas de ruta ejecutables y viables.Durante la fase de cómputo, es fundamental que el algoritmo reconozca las asimetrías inherentes a las rutas con alto gradiente topográfico. Asimismo, los algoritmos de poda (pruning) deben calibrarse cuidadosamente al momento de evaluar los nodos periféricos (La Paz y Chetumal), donde la falta de redundancia en la red carretera impone penalizaciones de tiempo insalvables. Con el JSON generado, la arquitectura de ruteo será capaz de determinar no solamente el trayecto más económico en papel, sino la trayectoria operacionalmente idónea para maximizar el rendimiento logístico nacional.
